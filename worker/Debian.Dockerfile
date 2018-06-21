@@ -50,11 +50,11 @@ WORKDIR /buildbot
 
 CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
 
+USER root
 # for debian
 #RUN sed -i '/^#\sdeb-src /s/^#//' "/etc/apt/sources.list"
 RUN cat /etc/apt/sources.list | sed 's/^deb /deb-src /g' >> /etc/apt/sources.list
-
-USER root
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get build-dep mariadb-server -y
+
 USER buildbot
