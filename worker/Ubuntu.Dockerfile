@@ -42,8 +42,7 @@ RUN         apt-get update && \
             pip --no-cache-dir install \
                 'twisted[tls]' && \
             pip install /usr/src/buildbot-worker && \
-
-    useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
+            useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
 USER buildbot
 
