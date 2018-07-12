@@ -44,13 +44,15 @@ RUN         apt-get update && \
             pip install /usr/src/buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
-USER buildbot
-
-WORKDIR /buildbot
-
-CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
-
 USER root
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get build-dep mariadb-server -y
+
+# for autobake-deb
+RUN apt-get install -y fakeroot devscripts iputils-ping equivs sudo
+RUN usermod -a -G sudo buildbot
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
 USER buildbot
+WORKDIR /buildbot
+CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
