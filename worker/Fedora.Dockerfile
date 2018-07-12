@@ -50,4 +50,7 @@ USER root
 RUN dnf -y upgrade
 RUN dnf -y install dnf-plugins-core
 RUN dnf -y builddep mariadb-server
+# For RPM autobake
+RUN dnf -y install rpm-build
+
 USER buildbot
