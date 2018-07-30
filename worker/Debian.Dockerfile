@@ -18,18 +18,24 @@ ENV         security_updates_as_of 2016-10-07
 # This will make apt-get install without question
 ARG         DEBIAN_FRONTEND=noninteractive
 
+# enable apt sources
+#RUN sed -i '/^#\sdeb-src /s/^#//' "/etc/apt/sources.list"
+RUN cat /etc/apt/sources.list | sed 's/^deb /deb-src /g' >> /etc/apt/sources.list
+
 # Install security updates and required packages
 RUN         apt-get update && \
             apt-get -y upgrade && \
             apt-get -y install -q \
                 build-essential \
                 git \
+                ccache \
                 subversion \
                 python-dev \
                 libffi-dev \
                 libssl-dev \
                 python-pip \
                 curl && \
+            apt-get build-dep mariadb-server -y && \
             rm -rf /var/lib/apt/lists/* && \
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
@@ -44,17 +50,9 @@ RUN         apt-get update && \
             pip install /usr/src/buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
+
 USER buildbot
-
 WORKDIR /buildbot
-
+RUN ccache -M 10G
 CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
 
-USER root
-# for debian
-#RUN sed -i '/^#\sdeb-src /s/^#//' "/etc/apt/sources.list"
-RUN cat /etc/apt/sources.list | sed 's/^deb /deb-src /g' >> /etc/apt/sources.list
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get build-dep mariadb-server -y
-
-USER buildbot
