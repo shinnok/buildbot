@@ -20,14 +20,14 @@ RUN         dnf -y upgrade && \
             dnf -y install \
                 @development-tools \
                 git \
-                ccahe \
+                ccache \
                 subversion \
                 python-devel \
                 libffi-devel \
                 openssl-devel \
                 python-pip \
-                redhat-rpm-config \
-                curl && \
+                redhat-rpm-config && \
+#                curl && \
 ## Test runs produce a great quantity of dead grandchild processes.  In a
 ## non-docker environment, these are automatically reaped by init (process 1),
 ## so we need to simulate that here.  See https://github.com/Yelp/dumb-init
