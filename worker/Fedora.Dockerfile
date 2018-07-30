@@ -20,6 +20,7 @@ RUN         dnf -y upgrade && \
             dnf -y install \
                 @development-tools \
                 git \
+                ccahe \
                 subversion \
                 python-devel \
                 libffi-devel \
@@ -40,13 +41,6 @@ RUN         dnf -y upgrade && \
             pip install /usr/src/buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
-USER buildbot
-
-WORKDIR /buildbot
-
-CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
-
-USER root
 RUN dnf -y upgrade
 RUN dnf -y install dnf-plugins-core
 RUN dnf -y builddep mariadb-server
@@ -54,3 +48,6 @@ RUN dnf -y builddep mariadb-server
 RUN dnf -y install rpm-build
 
 USER buildbot
+WORKDIR /buildbot
+RUN ccache -M 10G
+CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]

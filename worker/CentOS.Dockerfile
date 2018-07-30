@@ -21,6 +21,7 @@ RUN         yum -y --enablerepo=extras install epel-release && \
             yum -y groupinstall 'Development Tools' && \
             yum -y install \
                 git \
+                ccache \
                 subversion \
                 python-devel \
                 libffi-devel \
@@ -42,13 +43,9 @@ RUN         yum -y --enablerepo=extras install epel-release && \
             pip install /usr/src/buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
-USER buildbot
-
-WORKDIR /buildbot
-
-CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
-
-USER root
-RUN yum -y upgrade
 RUN yum-builddep -y mariadb-server
+
 USER buildbot
+WORKDIR /buildbot
+RUN ccache -M 10G
+CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
