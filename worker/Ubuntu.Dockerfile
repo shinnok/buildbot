@@ -22,6 +22,7 @@ ARG         DEBIAN_FRONTEND=noninteractive
 RUN         apt-get update && \
             apt-get -y upgrade && \
             apt-get -y install -q \
+                apt-utils \
                 build-essential \
                 git \
                 ccache \
@@ -30,9 +31,11 @@ RUN         apt-get update && \
                 libffi-dev \
                 libssl-dev \
                 python-pip \
-                curl && \
+                curl \
+                libcurl4-openssl-dev && \
             apt-get build-dep mariadb-server -y && \
             apt-get install -y fakeroot devscripts iputils-ping equivs sudo && \
+            apt-get install -y dpatch libnuma-dev libsnappy-dev uuid-dev && \
             rm -rf /var/lib/apt/lists/* && \
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
@@ -44,7 +47,7 @@ RUN         apt-get update && \
 # Install required python packages, and twisted
             pip --no-cache-dir install \
                 'twisted[tls]' && \
-            pip install /usr/src/buildbot-worker && \
+            pip install buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
 # for autobake-deb
