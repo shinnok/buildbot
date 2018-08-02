@@ -47,7 +47,7 @@ RUN         apt-get update && \
 # Install required python packages, and twisted
             pip --no-cache-dir install \
                 'twisted[tls]' && \
-            pip install buildbot-worker && \
+            pip install /usr/src/buildbot-worker && \
             useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
 
 # for autobake-deb
