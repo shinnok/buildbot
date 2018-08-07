@@ -16,6 +16,10 @@ ENV         security_updates_as_of 2018-06-15
 # This will make apt-get install without question
 ARG         DEBIAN_FRONTEND=noninteractive
 
+# enable apt sources
+RUN sed -i '/^#\sdeb-src /s/^#//' "/etc/apt/sources.list"
+#RUN cat /etc/apt/sources.list | sed 's/^deb /deb-src /g' >> /etc/apt/sources.list
+
 # Install security updates and required packages
 RUN         apt-get update && \
     apt-get -y upgrade && \
