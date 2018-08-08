@@ -48,7 +48,6 @@ RUN         apt-get update && \
     sudo && \
     # install MariaDB dependencies
     apt-get build-dep mariadb-server -y && \
-    rm -rf /var/lib/apt/lists/* && \
     # Test runs produce a great quantity of dead grandchild processes.  In a
     # non-docker environment, these are automatically reaped by init (process 1),
     # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
