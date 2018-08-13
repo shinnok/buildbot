@@ -45,6 +45,7 @@ RUN         apt-get update && \
     libnuma-dev \
     libsnappy-dev \
     uuid-dev \
+    libzstd-dev \
     sudo && \
     # install MariaDB dependencies
     apt-get build-dep mariadb-server -y && \
