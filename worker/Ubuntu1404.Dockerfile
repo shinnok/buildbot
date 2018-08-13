@@ -1,7 +1,7 @@
 #
 # Builbot worker for building MariaDB
 #
-FROM ubuntu:trusty
+FROM ubuntu:14.04
 MAINTAINER MariaDB Buildbot maintainers
 
 USER root
@@ -43,8 +43,6 @@ RUN pip3 --no-cache-dir install 'twisted[tls]'
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
-
-RUN ccache -M 10G
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
