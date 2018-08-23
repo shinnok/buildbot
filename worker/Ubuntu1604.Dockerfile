@@ -1,31 +1,30 @@
 #
 # Builbot worker for building MariaDB
 #
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER MariaDB Buildbot maintainers
 
 USER root
 
-# COPY docker/buildbot.tac /buildbot/buildbot.tac
-
 # This will make apt-get install without question
-ARG DEBIAN_FRONTEND=noninteractive	
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Enable apt sources
 RUN sed -i~orig -e 's/# deb-src/deb-src/' /etc/apt/sources.list
 
 # Install updates and required packages
 RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y build-dep -q mariadb-server && \
-    apt-get -y install -q \
+        apt-get -y upgrade && \
+        apt-get -y build-dep -q mariadb-server && \
+        apt-get -y install -q \
         apt-utils build-essential python-dev sudo git \
         devscripts equivs libcurl4-openssl-dev hardening-wrapper \
         ccache curl \
         libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
         libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
-        unixodbc-dev uuid-dev fakeroot iputils-ping \
-        python-pip libffi-dev
+        unixodbc-dev uuid-dev fakeroot iputils-ping libffi-dev \
+        python-pip libkrb5-dev libssl-dev \
+        dh-systemd libsystemd-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && mkdir /buildbot && chown -R buildbot /buildbot
@@ -34,11 +33,8 @@ RUN useradd -ms /bin/bash buildbot && mkdir /buildbot && chown -R buildbot /buil
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# give rights to put temp files in /run/shm
-RUN chgrp buildbot /run/shm && chmod g+w /run/shm
-
-RUN apt-get -y install libffi-dev
 # Upgrade pip and install packages
+RUN pip install --upgrade pip
 RUN pip install setuptools --upgrade
 RUN pip install 'twisted[tls]'
 RUN pip install buildbot-worker
